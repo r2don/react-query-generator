@@ -1,0 +1,10 @@
+{
+  "name": "react-query-generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/r2don/react-query-generator.git",
+  "author": "Jake Son <sonjeabin@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "bin": "cli.js"
+}

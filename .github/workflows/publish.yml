@@ -63,7 +63,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.target.artifact-name }}
-          path: generator/target/${{ matrix.target.target }}/release/generator
+          path: generator/target/${{ matrix.target.target }}/release/${{ matrix.target.build-name }}
 
   publish:
     runs-on: ubuntu-latest

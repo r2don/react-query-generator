@@ -20,67 +20,18 @@ jobs:
         run: grep -r --include "*.rs" --files-without-match "@generated" crates | xargs rustfmt --check --config="skip_children=true"
         working-directory: generator
 
-  build-generator:
-    name: Build Generator (${{ matrix.target.os }})
+  rust-tests:
+    name: Rust Tests (${{ matrix.os }})
     strategy:
       matrix:
-        target:
-          - target: x86_64-unknown-linux-musl
-            os: ubuntu-latest
-            build-name: react-query-generator 
-            artifact-name: react-query-generator-bin-linux-x64
-            packages: musl-tools
-          - target: aarch64-unknown-linux-musl
-            os: ubuntu-latest
-            build-name: react-query-generator
-            artifact-name: react-query-generator-bin-linux-arm64
-            cross: true
-          - target: x86_64-apple-darwin
-            os: macos-latest
-            build-name: react-query-generator
-            artifact-name: react-query-generator-bin-macos-x64
-          - target: aarch64-apple-darwin
-            os: macos-latest
-            build-name: react-query-generator
-            artifact-name: react-query-generator-bin-macos-arm64
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
-            build-name: react-query-generator.exe
-            artifact-name: react-query-generator-bin-win-x64
-    runs-on: ${{ matrix.target.os }}
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: 1.61.0
           override: true
-          target: ${{ matrix.target.target }}
-      - uses: actions/setup-node@v2
-        if: github.event_name == 'push'
-        with:
-          node-version: 16.x
-          cache: 'yarn'
-      - name: Install dependencies
-        if: github.event_name == 'push'
-        run: yarn install --frozen-lockfile --ignore-scripts
-#      - name: Set the compiler version when releasing the `main` branch
-#        if: github.event_name == 'push'
-#        run: yarn gulp setCompilerMainVersion
-#        env:
-#          RELEASE_COMMIT_SHA: ${{ github.sha }}
-      - name: Install packages
-        if: matrix.target.os == 'ubuntu-latest' && matrix.target.packages
-        run: sudo apt install ${{ matrix.target.packages }} -y
-      - name: Install cross
-        if: matrix.target.cross
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cross
-      - name: Build project
+      - name: "test"
+        run: cargo test
         working-directory: generator
-        run: ${{ matrix.target.cross && 'cross' || 'cargo' }} build --release --target ${{ matrix.target.target }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.target.artifact-name }}
-          path: generator/target/${{ matrix.target.target }}/release/${{ matrix.target.build-name }}

@@ -17,4 +17,4 @@ sed -i '' "s/^version = \".*\"/version = \"$version\"/" ./generator/Cargo.lock
 git add .
 git commit --amend --no-edit
 
-git push
+git push --tags

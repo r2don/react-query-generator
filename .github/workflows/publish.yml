@@ -84,29 +84,28 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: react-query-generator-bin-linux-x64
-          path: artifacts/linux-x64
+          path: linux-x64
       - name: Download artifact react-query-generator-bin-linux-arm64
         uses: actions/download-artifact@v2
         with:
           name: react-query-generator-bin-linux-arm64
-          path: artifacts/linux-arm64
+          path: linux-arm64
       - name: Download artifact react-query-generator-bin-macos-x64
         uses: actions/download-artifact@v2
         with:
           name: react-query-generator-bin-macos-x64
-          path: artifacts/macos-x64
+          path: macos-x64
       - name: Download artifact react-query-generator-bin-macos-arm64
         uses: actions/download-artifact@v2
         with:
           name: react-query-generator-bin-macos-arm64
-          path: artifacts/macos-arm64
+          path: macos-arm64
       - name: Download artifact react-query-generator-bin-win-x64
         uses: actions/download-artifact@v2
         with:
           name: react-query-generator-bin-win-x64
-          path: artifacts/win-x64
+          path: win-x64
       - name: Mark binaries as executable
-        working-directory: artifacts
         run: |
           chmod +x linux-x64/generator
           chmod +x linux-arm64/generator

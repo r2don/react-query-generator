@@ -1,6 +1,12 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   rust-lint:
@@ -15,7 +21,7 @@ jobs:
           components: rustfmt
       - name: "rustfmt"
         run: grep -r --include "*.rs" --files-without-match "@generated" crates | xargs rustfmt --check --config="skip_children=true"
-        working-directory: ./generator/
+        working-directory: generator
 
   build-generator:
     name: Build Generator (${{ matrix.target.os }})
@@ -27,12 +33,10 @@ jobs:
             build-name: react-query-generator 
             artifact-name: react-query-generator-bin-linux-x64
             packages: musl-tools
-            features: vendored
           - target: aarch64-unknown-linux-musl
             os: ubuntu-latest
             build-name: react-query-generator
             artifact-name: react-query-generator-bin-linux-arm64
-            features: vendored
             cross: true
           - target: x86_64-apple-darwin
             os: macos-latest
@@ -62,11 +66,11 @@ jobs:
       - name: Install dependencies
         if: github.event_name == 'push'
         run: yarn install --frozen-lockfile --ignore-scripts
-      - name: Set the compiler version when releasing the `main` branch
-        if: github.event_name == 'push'
-        run: yarn gulp setCompilerMainVersion
-        env:
-          RELEASE_COMMIT_SHA: ${{ github.sha }}
+#      - name: Set the compiler version when releasing the `main` branch
+#        if: github.event_name == 'push'
+#        run: yarn gulp setCompilerMainVersion
+#        env:
+#          RELEASE_COMMIT_SHA: ${{ github.sha }}
       - name: Install packages
         if: matrix.target.os == 'ubuntu-latest' && matrix.target.packages
         run: sudo apt install ${{ matrix.target.packages }} -y
@@ -77,8 +81,8 @@ jobs:
           command: install
           args: cross
       - name: Build project
-        working-directory: compiler
-        run: ${{ matrix.target.cross && 'cross' || 'cargo' }} build --release --target ${{ matrix.target.target }} ${{ matrix.target.features && '--features' }} ${{ matrix.target.features }}
+        working-directory: generator
+        run: ${{ matrix.target.cross && 'cross' || 'cargo' }} build --release --target ${{ matrix.target.target }}
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.target.artifact-name }}

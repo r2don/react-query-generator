@@ -8,13 +8,14 @@ error() {
 git switch main || error "Failed to switch to main branch"
 git pull || error "Failed to pull latest changes"
 
-yarn version "$1" || error "Failed to bump version"
+yarn version --no-git-tag-version "$@" || error "Failed to bump version"
 
 version=$(node -p "require('./package.json').version")
 sed -i '' "s/^version = \".*\"/version = \"$version\"/" ./generator/Cargo.toml
 sed -i '' "s/^version = \".*\"/version = \"$version\"/" ./generator/Cargo.lock
 
-git add .
-git commit --amend --no-edit
+git add package.json generator/Cargo.toml generator/Cargo.lock
+git commit -m "v$version"
+git tag "v$version"
 
-git push --tags
+git push --atomic origin main "v$version" || error "Failed to push changes"

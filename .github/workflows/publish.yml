@@ -60,7 +60,7 @@ jobs:
       - name: Build project
         working-directory: generator
         run: ${{ matrix.target.cross && 'cross' || 'cargo' }} build --release --target ${{ matrix.target.target }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target.artifact-name }}
           path: generator/target/${{ matrix.target.target }}/release/${{ matrix.target.build-name }}

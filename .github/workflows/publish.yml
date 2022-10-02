@@ -40,7 +40,7 @@ jobs:
           toolchain: 1.61.0
           override: true
           target: ${{ matrix.target.target }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         if: github.event_name == 'push'
         with:
           node-version: 16.x
